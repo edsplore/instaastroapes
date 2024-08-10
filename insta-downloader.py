@@ -25,6 +25,7 @@ DOWNLOAD_INTERVAL_HOURS = 48  # Set this to the desired interval
 
 # Initialize Instaloader
 L = instaloader.Instaloader(
+    user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
     dirname_pattern=os.path.join(BASE_DIR, "{profile}", "{shortcode}"),
     filename_pattern="{date_utc:%Y-%m-%d_%H-%M-%S}_UTC",
     download_video_thumbnails=False,
