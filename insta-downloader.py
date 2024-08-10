@@ -1,5 +1,4 @@
 import instaloader
-from instaloader import InstaloaderContext
 from datetime import datetime, timedelta
 import os
 import json
@@ -24,36 +23,13 @@ BASE_DIR = "instagram_posts"
 # Set the download interval
 DOWNLOAD_INTERVAL_HOURS = 48  # Set this to the desired interval
 
-# Custom InstaloaderContext class with proxy support
-class ProxyInstaloaderContext(InstaloaderContext):
-    def graphql_query(self, query_hash, variables, referer='https://www.instagram.com/'):
-        tmpsession = self.get_anonymous_session()
-        tmpsession.headers["User-Agent"] = self.user_agent
-        tmpsession.headers["Referer"] = referer
-        tmpsession.headers["X-CSRFToken"] = self.csrf_token
-        
-        # Add proxy configuration
-        tmpsession.proxies = {
-            'http': 'http://<proxyhost>:<port>',
-            'https': 'https://<proxyhost>:<port>'
-        }
-        tmpsession.verify = '<path-to-certs>/ca.crt'  # Path to your certificate file
-
-        variables_json = json.dumps(variables, separators=(',', ':'))
-        resp_json = self.get_json('graphql/query',
-                                  params={'query_hash': query_hash,
-                                          'variables': variables_json},
-                                  session=tmpsession)
-        return resp_json
-
-# Initialize Instaloader with custom context
+# Initialize Instaloader
 L = instaloader.Instaloader(
     dirname_pattern=os.path.join(BASE_DIR, "{profile}", "{shortcode}"),
     filename_pattern="{date_utc:%Y-%m-%d_%H-%M-%S}_UTC",
     download_video_thumbnails=False,
     compress_json=False,
-    save_metadata=True,
-    context=ProxyInstaloaderContext()
+    save_metadata=True
 )
 
 def download_post_completely(post, username):
